@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+</head>
+<body>
+<h1 class='title'>Weather Dashboard</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-3" id=navGround>
+            <div class="input-group mb-3" >
+                <h2>Search for a City</h2>
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon1">Submit</button>
+                </div>
+                <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+              </div>
+        </div>
+        <div class="col-9" id='main'> 
+            <div class="city"></div>
+            <div class="wind"></div>
+            <div class="humidity"></div>
+            <div class="temp"></div>
+            <div class="tempF"></div>
+            <div class="value"></div>
+        </div>
+    </div>
+    <div class="row" id='bottom'>
+
+    </div>
+    
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type='text/javascript'>
+    var APIKey = "f4d2eb8cfda6922a76bd431cf3a62f32"
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=London,England&appid=" + APIKey;
+    var uvURL ='http://api.openweathermap.org/data/2.5/uvi/forecast?appid=' + APIKey + '&lat=51.51&lon=-0.13';
+    var foreCast='http://api.openweathermap.org/data/2.5/forecast?q=London&appid=' + APIKey;
+    moment().subtract(10, 'days').calendar();
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function(response) {
+        
+        
+        const cityEl = $('.city');
+        const windEl = $('.wind');
+        const humidityEl = $('.humidity');
+        const tempEl = $('.temp');
+        const tempInF= (response.main.temp-273.15) * 1.80 + 32;
+        cityEl.html(response.name);
+        windEl.html('Wind Speed: ' + response.wind.speed);
+        humidityEl.html('Humidity ' + response.main.humidity);
+        tempEl.html('Temp in F: ' + tempInF.toFixed(2));
+
+      
+        
+        $(".city").html("<h1>" + response.name + ' ' + moment().subtract(10, 'days').calendar() + "</h1>");
+        $(".wind").text("Wind Speed: " + response.wind.speed);
+        $(".humidity").text("Humidity: " + response.main.humidity);
+
+
+    });
+    $.ajax({
+        url: uvURL,
+        method: "GET"
+    }).then(function(response) {
+        const uvEl = $('.value');
+        uvEl.html('UV Index' +response.value);
+        $(".value").text("UV Index: " + response.value);
+        console.log(uvEl);
+        if (response.value>7){
+            $('.value').css('background-color','red');
+        } else {
+            $('.value').css('background-color','green');
+        }
+
+
+    });
+    
+    $.ajax({
+        url: foreCast,
+        method: "GET"
+    }).then(function(response) {
+        const foreCastEl = $('#bottom');
+        JSON.stringify(response.list);
+        foreCastEl.html('Forecast: ' +response.list);
+        $("#bottom").text("Forecast: " + response.list);
+        console.log(response.list.main);
+        
+    });
+    
+
+</script>
+</body>
+</html>

@@ -21,4 +21,9 @@
     margin: auto;
     height: 200px;
 }
+#space {
+    background-color: lightgrey;
+    padding: 10px;
+
+}
 
